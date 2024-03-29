@@ -9,9 +9,16 @@ public class Highlander : MonoBehaviour
         // THERE CAN BE ONLY ONE
 
         bool foundOneActive = false;
-        foreach (var llama in transform.GetComponentsInChildren<Llama>()) {
-            if (!File.Exists(llama.GetComponent<ModelLoaderBase>().GetFullModelPath())) {
-                Debug.Log($"Disabling {llama.gameObject.name} because model file not found at {llama.GetComponent<ModelLoaderBase>().GetFullModelPath()}");
+        foreach (var llama in transform.GetComponentsInChildren<Llama>())
+        {
+            string path = llama.GetComponent<ModelLoaderBase>().staticStreamingAssetsPath();
+            // llama.GetComponent<ModelLoaderBase>().GetFullModelPath((result) =>
+            // {
+            //     
+            // });
+            Debug.Log("ModelPath: " + path);
+            if (!File.Exists(path)) {
+                Debug.Log($"Disabling {llama.gameObject.name} because model file not found at {path}");
                 llama.gameObject.SetActive(false);
             }
             else if (foundOneActive) {
@@ -21,6 +28,7 @@ public class Highlander : MonoBehaviour
             else if (llama.gameObject.activeSelf) {
                 foundOneActive = true;
             }
+           
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.Profiling;
 
 public class KarpathyLoader : ModelLoaderBase {
@@ -17,7 +18,12 @@ public class KarpathyLoader : ModelLoaderBase {
   private List<IDisposable> _garbage = new List<IDisposable>();
 
   protected async override Task<(LlamaConfig, WeightsGpu, Tokenizer)> LoadModelImpl() {
-    string fullPath = GetFullModelPath();
+    // Create a TaskCompletionSource to wrap the asynchronous operation
+    var tcs = new TaskCompletionSource<(LlamaConfig, WeightsGpu, Tokenizer)>();
+    string fullPath = staticStreamingAssetsPath();
+    Debug.Log("fullPath: " + fullPath);
+
+  
 
     // Karpathy's format only uses float32
     float startTime = Time.realtimeSinceStartup;
@@ -26,8 +32,28 @@ public class KarpathyLoader : ModelLoaderBase {
       Profiler.BeginSample("LoadWeights");
       LlamaConfig config = null;
       WeightsGpu weights = null;
+      byte[] fileData;
+        
+   
+      UnityWebRequest www = UnityWebRequest.Get(fullPath);
+      var  asyncOperation = www.SendWebRequest();
+      while (!asyncOperation.isDone)
+      {
+        await Task.Yield(); // Yield control back to the caller temporarily
+      }
 
-      using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+      if (www.result == UnityWebRequest.Result.Success)
+      {
+        fileData = www.downloadHandler.data;
+
+      }
+      else
+      {
+        throw new Exception("Model file retrieval failed.");
+      }
+      // using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+          
+      using (MemoryStream fs = new MemoryStream(fileData))
       using (BinaryReader br = new BinaryReader(fs)) {
         // Read the config
         config = new LlamaConfig() {
@@ -128,6 +154,7 @@ public class KarpathyLoader : ModelLoaderBase {
         }
       }
       
+
       LoadTokenizer(config.vocab_size);
 
       Debug.Log("Weights loaded successfully in " + (Time.realtimeSinceStartup - startTime) + "s");
@@ -144,6 +171,7 @@ public class KarpathyLoader : ModelLoaderBase {
       _garbage.Clear();
       Profiler.EndSample();
     }
+    
   }
 
   private void ReadTensor(BinaryReader br, GpuTensor tensor) {
