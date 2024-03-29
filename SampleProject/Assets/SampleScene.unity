@@ -140,7 +140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &54362380
 Transform:
   m_ObjectHideFlags: 0
@@ -894,7 +894,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &606020842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -943,7 +943,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ModelPath: stories15M.bin
-  ModelsDir: 
+  ModelsDir: C:\Users\ramobar\RiderProjects\PerroPastor\SampleProject\Assets\StreamingAssets
   VocabPath: tokenizer.bin
   Config:
     dim: 0
@@ -953,7 +953,7 @@ MonoBehaviour:
     n_kv_heads: 0
     vocab_size: 0
     seq_len: 0
-  QuantMode: 1
+  QuantMode: 0
 --- !u!1 &726328889
 GameObject:
   m_ObjectHideFlags: 0

@@ -225,7 +225,7 @@ public class GGUFLoader : ModelLoaderBase {
   }
 
   protected async override Task<(LlamaConfig, WeightsGpu, Tokenizer)> LoadModelImpl() {
-    string fullPath = GetFullModelPath();
+    string fullPath = staticStreamingAssetsPath();
 
     if (CacheWeights && _cachedWeights != null) {
       if (_cachedWeights.ModelPath == fullPath && _cachedWeights.Weights.IsValid()) {
